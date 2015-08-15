@@ -12,3 +12,6 @@ class Message(models.Model):
 
   datetime = models.DateTimeField(auto_now_add=True, verbose_name=_("date and time"),
     help_text=_("the datetime of the message creation"))
+
+  def __str__(self):
+    return self.author_pseudo + ': ' + self.content
