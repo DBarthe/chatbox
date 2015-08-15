@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView, View
 from django.utils.translation import npgettext
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 
 from .models import Message
 
@@ -72,3 +72,29 @@ class FetchLastMessages(FetchMessagesBase):
     except ValueError:
       return HttpResponseBadRequest("Parameter 'count' was not a valid integer", content_type="text/plain")
 
+
+from django.core.management.base import NoArgsCommand
+
+
+class PushMessage(View):
+
+  def get(self, request, *args, **kwargs):
+    request.POST = request.GET
+    return self.post(request)
+
+  def post(self, request, *args, **kwargs):
+
+    try:
+      author_ip = request.META['REMOTE_ADDR']
+      author_pseudo = request.POST['pseudo']
+      message_content = request.POST['content']
+
+      message = Message(author_ip=author_ip, author_pseudo=author_pseudo, content=message_content)
+      message.save()
+
+      response = HttpResponse("The message has been sent", content_type="text/plain")
+      response.status_code = 201
+      return response
+
+    except KeyError as e:
+      return HttpResponseBadRequest("Parameter " + e.args[0] + " was missing'", content_type="text/plain")
