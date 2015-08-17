@@ -32,7 +32,7 @@ chatboxApp.controller('MessageListController', ['$scope', '$interval', '$timeout
         },
 
         function(){ // error callback
-          console.warn('fetchAll request has failed, retrying in ' + RETRY_DELAY + 'ms');
+          console.warn('fetchLast request has failed, retrying in ' + RETRY_DELAY + 'ms');
           $timeout(initialize, RETRY_DELAY);
         }
       );

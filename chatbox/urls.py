@@ -18,12 +18,15 @@ from django.conf.urls.i18n import i18n_patterns
 
 from django.contrib import admin
 from mainapp import urls as mainapp_urls
+from mainapp import urls_noi18n as mainapp_urls_noi18n
+
 
 urlpatterns = [
-    url(r'^i18n/', include(i18n)),
+  url(r'^i18n/', include(i18n)),
+  url(r'^admin/', include(admin.site.urls)),
+  url(r'^', include(mainapp_urls_noi18n)),
 ]
 
-urlpatterns +=  i18n_patterns(
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include(mainapp_urls))
+urlpatterns += i18n_patterns(
+  url(r'^', include(mainapp_urls)),
 )

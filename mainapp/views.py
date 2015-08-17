@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic.base import TemplateView, View
 from django.utils.translation import npgettext
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.utils import timezone
 
 from .models import Message
 
@@ -24,7 +25,7 @@ class FetchMessagesBase(View):
   def prepare_message(self, message):
     return {
       'id': message.id,
-      'datetime': message.datetime.strftime("%X"),
+      'datetime': timezone.localtime(message.datetime).strftime("%X"),
       'author': message.author_pseudo,
       'content': message.content,
     }
@@ -75,7 +76,7 @@ class FetchLastMessages(FetchMessagesBase):
         return JsonResponse(resp_data)
 
     except ValueError:
-      return HttpResponseBadRequest("Parameter 'count' was not a valid integer", content_type="text/plain")
+      return HttpResponseBadRequest("Parameter 'count' was not a valid integer " + request.GET.get('count', FetchLastMessages.DEFAULT_MESSAGE_COUNT), content_type="text/plain")
 
 
 class PushMessage(View):
