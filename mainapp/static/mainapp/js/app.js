@@ -6,6 +6,7 @@ chatboxApp.controller('MessageListController', ['$scope', '$interval', '$timeout
     // constants
     var INTERVAL_DELAY = 1000; // delay between each request
     var RETRY_DELAY = 5000; // delay before retry a request when this request has failed
+    var LAST_MESSAGES_COUNT = 20; // number of last messages to fetch at the begining
 
     // function that do some work the first time, but must not be re-called
     function initialize(){
@@ -19,7 +20,7 @@ chatboxApp.controller('MessageListController', ['$scope', '$interval', '$timeout
     function start(){
 
       // fetch all the messages
-      fetchMessagesService.fetchAll(
+      fetchMessagesService.fetchLast(LAST_MESSAGES_COUNT,
 
         function(messageList){ // success callback
           // set the initial messages
@@ -142,7 +143,7 @@ chatboxApp.factory('fetchMessagesService', ['$http', function($http){
 
     fetchLast: function(count, success, error){
       var getParameters = (typeof count === undefined ? '' : ('?count=' + count));
-      return $http.get('/fetch/last' + getParameters).then(successHelper(callback), error);
+      return $http.get('/fetch/last' + getParameters).then(successHelper(success), error);
     }
   };
 
