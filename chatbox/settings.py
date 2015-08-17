@@ -21,14 +21,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-# Dummy Key. Not the one used in production
-SECRET_KEY = 'bz-*wt!xvhg&+clq0j-%0i5l*acf1!#e7cj#tax$#@+zehj^07'
+# Fetch the secret key from environment
+SECRET_KEY = os.environ['CHATBOX_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['chatbox.dbarth.eu']
 
+
+# Security
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Application definition
 
