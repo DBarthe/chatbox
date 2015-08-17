@@ -22,12 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # Dummy Key. Not the one used in production
-SECRET_KEY = 'bz-*wt!xvhg&+clq0j-%0i5l*acf1!#e7cj#tax$#@+zehj^07'
+SECRET_KEY = os.environ['CHATBOX_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['chatbox.dbarth.eu']
 
 
 # Application definition
@@ -120,6 +120,8 @@ STATICFILES_FINDERS = (
   'django.contrib.staticfiles.finders.AppDirectoriesFinder',
   'djangobower.finders.BowerFinder',
 )
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Django-bower
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
