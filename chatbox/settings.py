@@ -105,6 +105,7 @@ LANGUAGES = (
   ('fr', _('French')),
 )
 
+
 LOCALE_PATHS = (
   os.path.join(BASE_DIR, 'locale'),
 )
@@ -126,4 +127,7 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 
 BOWER_INSTALLED_APPS = (
   'angular',
+  'angular-route',
+  'bootstrap',
+  'html5-boilerplate',
 )

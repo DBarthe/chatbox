@@ -9,9 +9,14 @@ class Index(TemplateView):
 
   template_name = 'mainapp/index.html'
 
+  def get(self, request, *args, **kwargs):
+    self.set_pseudo = request.GET.get('pseudo', None)
+    return super(Index, self).get(request, *args, **kwargs)
+
   def get_context_data(self, **kwargs):
     context = super(Index, self).get_context_data(**kwargs)
-    context['blabla'] = "hello"
+    if self.set_pseudo is not None:
+      context['pseudo'] = self.set_pseudo
     return context
 
 class FetchMessagesBase(View):
@@ -19,7 +24,7 @@ class FetchMessagesBase(View):
   def prepare_message(self, message):
     return {
       'id': message.id,
-      'datetime': message.datetime,
+      'datetime': message.datetime.strftime("%X"),
       'author': message.author_pseudo,
       'content': message.content,
     }
@@ -29,7 +34,7 @@ class FetchMessagesBase(View):
 
   def make_resp_data(self, message_list):
     return {
-      'data': self.prepare_message_list(message_list)
+      'list': self.prepare_message_list(message_list)
     }
 
 class FetchMessagesSince(FetchMessagesBase):
@@ -73,9 +78,6 @@ class FetchLastMessages(FetchMessagesBase):
       return HttpResponseBadRequest("Parameter 'count' was not a valid integer", content_type="text/plain")
 
 
-from django.core.management.base import NoArgsCommand
-
-
 class PushMessage(View):
 
   def get(self, request, *args, **kwargs):
@@ -86,8 +88,13 @@ class PushMessage(View):
 
     try:
       author_ip = request.META['REMOTE_ADDR']
-      author_pseudo = request.POST['pseudo']
+      author_pseudo = request.POST['author']
       message_content = request.POST['content']
+
+      if len(author_pseudo) == 0:
+        return HttpResponseBadRequest("Parameter 'author' was empty'", content_type="text/plain")
+      elif len(message_content) == 0:
+        return HttpResponseBadRequest("Parameter 'content' was empty'", content_type="text/plain")
 
       message = Message(author_ip=author_ip, author_pseudo=author_pseudo, content=message_content)
       message.save()

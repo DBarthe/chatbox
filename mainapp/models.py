@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 class Message(models.Model):
-
+	
   # the implicit id is used to determine message order
   author_pseudo = models.CharField(max_length=64, blank=False, verbose_name=_("author's pseudo"))
 

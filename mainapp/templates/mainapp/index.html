@@ -1,8 +1,58 @@
-<html>
+<!DOCTYPE html>
+{% load i18n %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+<!--[if lt IE 7]>      <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js"> <!--<![endif]-->
 <head>
-  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Chatbox</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'html5-boilerplate/dist/css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static 'html5-boilerplate/dist/css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'mainapp/css/app.css' %}">
+  <script src="{% static 'html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+  <script src="{% static 'html5-boilerplate/dist/js/vendor/jquery-1.11.3.min.js' %}"></script>
+
+  <script>
+    // data sent by the server
+    var serverData = {
+      {% if pseudo %}
+      pseudo: "{{ pseudo }}",
+      {% endif %}
+    };
+  </script>
 </head>
 <body>
-  <p>Hello world !</p>
+  <div id="viewport">
+    {% verbatim %}
+
+    <div id="message-list" ng-controller="MessageListController" >
+      <div ng-cloak>
+        <div ng-repeat="message in messageList">
+          <small class="text-muted">[{{ message.datetime }}]</small>
+          <strong class="text-primary">{{ message.author }}: </strong>
+          <span>{{ message.content }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="submit-group" class="form-group" ng-controller="SubmitMessageController">
+      <form name="submitMessageForm" ng-submit="submit()">
+        <input id="message-input" type="text" class="form-control" ng-model="message" placeholder="Message" ngMinlength="1" />
+      </form>
+    </div>
+
+    {% endverbatim %}
+  </div>
+
+  <script src="{% static 'angular/angular.js' %}"></script>
+  <script src="{% static 'angular-route/angular-route.js' %}"></script>
+  <script src="{% static 'mainapp/js/app.js' %}"></script>
 </body>
 </html>
