@@ -22,9 +22,9 @@
   <script>
     // data sent by the server
     var serverData = {
-      {% if pseudo %}
-      pseudo: "{{ pseudo }}",
-      {% endif %}
+      {% if pseudo %}pseudo: "{{ pseudo }}",{% endif %}
+      {% if tz %}tz: "{{ tz }}",{% endif %}
+
     };
   </script>
 </head>

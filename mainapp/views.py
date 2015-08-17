@@ -3,6 +3,8 @@ from django.views.generic.base import TemplateView, View
 from django.utils.translation import npgettext
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
+import pytz
+
 
 from .models import Message
 
@@ -12,15 +14,35 @@ class Index(TemplateView):
 
   def get(self, request, *args, **kwargs):
     self.set_pseudo = request.GET.get('pseudo', None)
+
+    self.set_tz = request.GET.get('tz', None)
+    if self.set_tz is not None:
+      try:
+        timezone.activate(self.set_tz)
+      except pytz.exceptions.UnknownTimeZoneError:
+        self.set_tz = None
+
     return super(Index, self).get(request, *args, **kwargs)
 
   def get_context_data(self, **kwargs):
     context = super(Index, self).get_context_data(**kwargs)
     if self.set_pseudo is not None:
       context['pseudo'] = self.set_pseudo
+    if self.set_tz is not None:
+      context['tz'] = self.set_tz
     return context
 
 class FetchMessagesBase(View):
+
+  def select_timezone_from_request(self, request):
+    if request.GET is not None:
+      try:
+        tz = request.GET['tz']
+        timezone.activate(tz)
+      except KeyError:
+        pass
+      except pytz.exceptions.UnknownTimeZoneError:
+        pass
 
   def prepare_message(self, message):
     return {
@@ -42,6 +64,7 @@ class FetchMessagesSince(FetchMessagesBase):
   """ Return all messages posted since one particular message """
 
   def get(self, request, *args, **kwargs):
+    self.select_timezone_from_request(request)
     try:
       message_id = int(request.GET['message_id'])
       message_list = Message.objects.filter(id__gt=message_id)
@@ -57,6 +80,7 @@ class FetchMessagesSince(FetchMessagesBase):
 class FetchAllMessages(FetchMessagesBase):
 
   def get(self, request, *args, **kwargs):
+    self.select_timezone_from_request(request)
     message_list = Message.objects.all()
     resp_data = self.make_resp_data(message_list)
     return JsonResponse(resp_data)
@@ -65,6 +89,7 @@ class FetchLastMessages(FetchMessagesBase):
   DEFAULT_MESSAGE_COUNT = 20
 
   def get(self, request, *args, **kwargs):
+    self.select_timezone_from_request(request)
     try:
       count = int(request.GET.get('count', FetchLastMessages.DEFAULT_MESSAGE_COUNT))
       if count < 0:

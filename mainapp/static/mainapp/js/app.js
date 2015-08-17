@@ -124,26 +124,40 @@ chatboxApp.controller('SubmitMessageController', ['$scope', 'sharedDataService',
 
 
 // Service that executes requests for fetching messages 
-chatboxApp.factory('fetchMessagesService', ['$http', function($http){
+chatboxApp.factory('fetchMessagesService', ['$http', 'sharedDataService', function($http, sharedDataService){
 
-  var successHelper = function(callback){
+  function successHelper(callback){
     return function(response){
       callback(response.data.list);
     }
   };
 
+  // generic function for all the specialied fetch* functions
+  function fetchGeneric(method, url, params, success, error){
+    var config = {
+      method: method,
+      url: url,
+      params: $.extend(params, {
+        tz: sharedDataService.tz
+      }),
+    };
+
+    return $http(config).then(function(response){
+      success(response.data.list);
+    }, error);
+  }
+
   return {
     fetchSince: function(messageId, success, error){
-      return $http.get('/fetch/since?message_id=' + messageId).then(successHelper(success), error);
+      return fetchGeneric('GET', '/fetch/since', { 'message_id': messageId }, success, error);
     },
 
     fetchAll: function(success, error){
-      return $http.get('/fetch/all').then(successHelper(success), error);
+      return fetchGeneric('GET', '/fetch/all', {}, success, error);
     },
 
     fetchLast: function(count, success, error){
-      var getParameters = (typeof count === undefined ? '' : ('?count=' + count));
-      return $http.get('/fetch/last' + getParameters).then(successHelper(success), error);
+      return fetchGeneric('GET', '/fetch/last', { 'count': count }, success, error);
     }
   };
 
@@ -153,7 +167,14 @@ chatboxApp.factory('fetchMessagesService', ['$http', function($http){
 chatboxApp.factory('submitMessageService', ['$http', function($http){
 
   return function(pseudo, message, success, error){
-    return $http.get('/push?author='+pseudo+"&content="+message).then(success, error);
+
+    return $http.get('/push', {
+      params: {
+        author: pseudo,
+        content: message, 
+      }
+    }).then(success, error);
+
   };
 }]);
 
@@ -161,7 +182,8 @@ chatboxApp.factory('submitMessageService', ['$http', function($http){
 chatboxApp.factory('sharedDataService', [function(){
 
   return {
-    pseudo: serverData.pseudo || ''
+    pseudo: serverData.pseudo || '',
+    tz: serverData.tz || undefined
   }
 
 }]);
