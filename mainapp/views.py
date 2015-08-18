@@ -3,14 +3,19 @@ from django.views.generic.base import TemplateView, View
 from django.utils.translation import npgettext
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
+from django.views.decorators.clickjacking import xframe_options_exempt
 import pytz
 
-
 from .models import Message
+
 
 class Index(TemplateView):
 
   template_name = 'mainapp/index.html'
+
+  @xframe_options_exempt
+  def dispatch(self, request, *args, **kwargs):
+    return super(Index, self).dispatch(request,*args,**kwargs)
 
   def get(self, request, *args, **kwargs):
     self.set_pseudo = request.GET.get('pseudo', None)
