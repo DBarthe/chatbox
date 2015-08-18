@@ -14,4 +14,5 @@ class Message(models.Model):
     help_text=_("the datetime of the message creation"))
 
   def __str__(self):
-    return self.author_pseudo + ': ' + self.content
+    return (self.author_pseudo + ': ' + self.content).encode('ascii', errors='replace')
+
