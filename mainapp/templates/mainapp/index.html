@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load i18n %}
 {% load static %}
+{% load compress %}
 {% get_current_language as LANGUAGE_CODE %}
 <!--[if lt IE 7]>      <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="{{ LANGUAGE_CODE }}" ng-app="chatboxApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -12,10 +13,14 @@
   <title>Chatbox</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% compress css %}
   <link rel="stylesheet" href="{% static 'html5-boilerplate/dist/css/normalize.css' %}">
   <link rel="stylesheet" href="{% static 'html5-boilerplate/dist/css/main.css' %}">
   <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.css' %}">
   <link rel="stylesheet" href="{% static 'mainapp/css/app.css' %}">
+  {% endcompress %}
+
+  {% compress js %}
   <script src="{% static 'html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js' %}"></script>
   <script src="{% static 'html5-boilerplate/dist/js/vendor/jquery-1.11.3.min.js' %}"></script>
 
@@ -27,6 +32,7 @@
 
     };
   </script>
+  {% endcompress %}
 </head>
 <body>
   <div id="viewport">
@@ -51,8 +57,10 @@
     {% endverbatim %}
   </div>
 
+  {% compress js %}
   <script src="{% static 'angular/angular.js' %}"></script>
   <script src="{% static 'angular-route/angular-route.js' %}"></script>
   <script src="{% static 'mainapp/js/app.js' %}"></script>
+  {% endcompress %}
 </body>
 </html>
