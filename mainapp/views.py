@@ -95,8 +95,8 @@ class FetchLastMessages(FetchMessagesBase):
       if count < 0:
         return HttpResponseBadRequest("Parameter 'count' was nagative", content_type="text/plain")
       else:
-        message_list = Message.objects.order_by('-id')[:count]
-        message_list = message_list.reverse()
+        message_list = [ m for m in Message.objects.order_by('-id')[:count]]
+        message_list.reverse()
         resp_data = self.make_resp_data(message_list)
         return JsonResponse(resp_data)
 
